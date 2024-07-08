@@ -101,6 +101,7 @@ This lower value is more likely to come from the filtering input stage of the AD
 
 However, ENOB at 11.08 sounds pretty bad because the ADC is acting like an ideal 11 bit ADC instead of a 12 bit ADC so the LSB is less reliable and more prone to noise, but still satisfactory as there is no demand for amazing precision.
 
+Concluding, we could say that the “CANNode → Canbus → Receiver Node” system acts as if we attached an ideal 11 bit ADC directly between Sensors and ECU, with some irregularities in the 12th bit. 
 
 ### Notes/comments
 

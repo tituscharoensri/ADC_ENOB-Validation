@@ -76,6 +76,9 @@ Datasheet specifications of ADC128S102CIMT/NOPB:
 
 The calculated ENOB value was 11.08, which is slightly on the low side since the minimum value should be somewhere in the “11.x” range, especially with the ENOB vs. Supply graph showing it should be closer to 11.8. Furthermore, LTspice simulation of the ADC input filtering clearly shows 0db attenuation at 1Khz, so this lower ENOB could result from a variety of other reasons.
 
+![LTSpice](./images/ltspice.png)
+
+
 I think this is somewhat due to my Sample rate calculations. The datasheet specifies a sample rate of 500 kSPS - 1MSPS sample rate, however the datasheet does not specify how to calculate the exact sample rate the ADC is running at. Thus I have ignored their sample rate range and calculated it myself using my understanding of SPI and how it works with this chip, which may be flawed and resulted in a different value. 
 
 This lower value is more likely to come from the filtering input stage of the ADC input, non-linearities in solder joints and connections, and the baud rate being 500Khz which is quite slow resulting in larger gaps in sample data. 

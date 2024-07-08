@@ -8,6 +8,9 @@ The CANNode PCB gathers analogue sensor data to an 12-bit ADC chip, which then c
 
 This Repository contains the algorithm i used to perfrom Fourier Analysis on raw ADC data values that were parsed into a txt file. This code will output a ENOB value which is calculated using SNR (Signal to noise Ratio). It is better to use SINAD as this also accounts for harmonic distorion, however this is something i will improve on the future.
 
+ADC Chip: https://octopart.com/adc128s102cimt%2Fnopb-texas+instruments-24823012?r=sp
+
+
 ## Features
 - Outputs ENOB VALUE
 - Displays FFT plot

@@ -1,7 +1,7 @@
 # RedBack Racing SensorHub PCB ADC Validation using ENOB
 
 The CANNode PCB gathers analogue sensor data to an 12-bit ADC chip, which then communicates via SPI to an STM32F446RET6 chip. The data is lightly processed and packaged into a CAN2.0-A packet and sent to the ECU via a full speed CANBUS. 
-![CANNode4.0 2024](C:\Users\Public\Pictures\CANNode4.0.jpg)
+![CANNode4.0 2024](./images/CANNode4.0.jpg)
 
 ## Introduction
 

@@ -16,7 +16,13 @@ ADC Chip: https://octopart.com/adc128s102cimt%2Fnopb-texas+instruments-24823012?
 - Displays FFT plot
 
 ## Testing Process
-ENOB stands for Effective Number of Bits. It is a measure of the actual performance of an Analog-to-Digital Converter (ADC) and is used to quantify how many bits of the ADC are effectively being used to represent the analog input signal. 
+ENOB stands for Effective Number of Bits. It is a measure of the actual performance of an Analog-to-Digital Converter (ADC) and is used to quantify how many bits of the ADC are effectively being used to represent the analog input signal.  
+
+When evaluating the ENOB of a larger system that includes filters, signal conditioning, and other processing stages, you can compare it with the ENOB value of the ADC chip itself. This comparison helps you understand how much precision is lost due to the surrounding circuitry.
+
+In this case i am calculating System ENOB, which is using data acquired from a receiving CANbus Node (Nucleo board) to evaluate the performance of this system:
+
+CANNode → Sensor CANbus → Receiver Node.
 
 There are a couple of ways to calculate ENOB, we used to use SNR (signal to noise ratio), SINAD (Signal to noise and distortion ratio) or THD (Total harmonic distortion). Once we obtain a ENOB value we can compare  with the manufacturer's specifications for the ADC resolution.
 
@@ -27,6 +33,8 @@ Analog Signal Source: I set up a signal generator to produce a 1 kHz sine wave w
 ### Capture ADC Data
 
 Sampling: Use the STM32 MCU to capture a large number of samples from the ADC. Ensure that the sampling rate is appropriate for the input signal frequency. (e.g. >10 times the input signal frequency)
+
+CANNode → CAN → Nucleo Board → USB → PC com port
 
 Sampling rate calculations:
 
@@ -74,14 +82,24 @@ Datasheet specifications of ADC128S102CIMT/NOPB:
 
 ### Conclusion
 
+
+ENOB of ADC: This value, specified in the datasheet, represents the performance of the ADC chip under ideal conditions. (11.3 - 11.8)
+
+ENOB of System: This value represents the performance of the entire system, including all surrounding circuitry. (11.08)
+
+If the System ENOB is Close to the ADC ENOB: The surrounding circuitry is well-designed, and it adds minimal noise and distortion to the signal.
+
+If the System ENOB is Significantly Lower than the ADC ENOB: The surrounding circuitry introduces significant noise and distortion, degrading the overall system performance.
+
 The calculated ENOB value was 11.08, which is slightly on the low side since the minimum value should be somewhere in the “11.x” range, especially with the ENOB vs. Supply graph showing it should be closer to 11.8. Furthermore, LTspice simulation of the ADC input filtering clearly shows 0db attenuation at 1Khz, so this lower ENOB could result from a variety of other reasons.
 
 ![LTSpice](./images/ltspice.png)
 
-
 I think this is somewhat due to my Sample rate calculations. The datasheet specifies a sample rate of 500 kSPS - 1MSPS sample rate, however the datasheet does not specify how to calculate the exact sample rate the ADC is running at. Thus I have ignored their sample rate range and calculated it myself using my understanding of SPI and how it works with this chip, which may be flawed and resulted in a different value. 
 
-This lower value is more likely to come from the filtering input stage of the ADC input, non-linearities in solder joints or interconnects, and the baud rate being 500Khz which is quite slow resulting in larger gaps in sample data. I have ignored Latency between CANNode PCB and the Nucleoboard reciever on the CANbus because there were only 2 nodes running at 1Mhz so all data would have been transmitted and logged in the com-port.
+This lower value is more likely to come from the filtering input stage of the ADC input, non-linearities in solder joints and interconnects, the SPI baud rate at 500Khz which is quite slow resulting in larger gaps in sample data or the Can bus Intermission time between CAN frames.
+
+However, ENOB at 11.08 sounds pretty bad because the ADC is acting like an ideal 11 bit ADC instead of a 12 bit ADC so the LSB is less reliable and more prone to noise, but still satisfactory as there is no demand for amazing precision.
 
 
 ### Notes/comments

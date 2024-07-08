@@ -72,7 +72,7 @@ Program calculates ENOB. Compare the calculated ENOB with the specified ENOB for
 
 ![Output](./images/output.png)
 
-FINAL ENOB: 11.08
+System ENOB: 11.08
 
 FFT Analysis shows a peak at 1Khz corresponding to fundamental frequency of 1khz input sine wave, the peak at 0hz is due to the 2.5v DC offset. 
 

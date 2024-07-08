@@ -81,13 +81,8 @@ The calculated ENOB value was 11.08, which is slightly on the low side since the
 
 I think this is somewhat due to my Sample rate calculations. The datasheet specifies a sample rate of 500 kSPS - 1MSPS sample rate, however the datasheet does not specify how to calculate the exact sample rate the ADC is running at. Thus I have ignored their sample rate range and calculated it myself using my understanding of SPI and how it works with this chip, which may be flawed and resulted in a different value. 
 
-This lower value is more likely to come from the filtering input stage of the ADC input, non-linearities in solder joints and connections, and the baud rate being 500Khz which is quite slow resulting in larger gaps in sample data. 
+This lower value is more likely to come from the filtering input stage of the ADC input, non-linearities in solder joints or interconnects, and the baud rate being 500Khz which is quite slow resulting in larger gaps in sample data. I have ignored Latency between CANNode PCB and the Nucleoboard reciever on the CANbus because there were only 2 nodes running at 1Mhz so all data would have been transmitted and logged in the com-port.
 
-However, ENOB at 11.08 sounds pretty bad because the ADC is acting like an 11 bit instead of a 12 bit ADC. This would mean the ADC value would essentially be halved, as removing 1 bit divides by 2. This actually makes sense as when i was originally testing the ADC, the voltage would always be half of the actual voltage output from the power supply, and i had to multiply the result of the ADC function by 2 in order to get an accurate value. 
-
-![Datasheet](./images/code.png)
-
-After multiplying by 2, the accuracy of the reading was approximately 99.9% so i was happy with that and considered it to be “working“, but the fact that i had to multiply by 2 on my PCB (CANNodeV4) and the code for CANNodev3.1 did not have a multiply by 2 … had always bugged me. This was evidence for me believe an ENOB value of 11.08 to be an accurate, however next steps for next year would be further analyzing to get an ENOB value of eat least above 11.50. 
 
 ### Notes/comments
 

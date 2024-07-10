@@ -38,7 +38,7 @@ Sampling: Use the STM32 MCU to capture a large number of samples from the ADC. E
 
 CANNode → CAN → Nucleo Board → USB → PC com port
 
-Sampling rate calculations:
+**Sampling rate calculations:**
 
 Frame Format: Motorola 
 
@@ -58,7 +58,7 @@ Each ADC sample would require two SPI transactions (16 clock cycles).
 
 Time per conversion: 32 μs 
 
-Sampling rate: 1/Time per Conversion =  31.25 kSPS
+**Sampling rate:** 1/Time per Conversion =  31.25 kSPS
 
 Capture samples of the ADC output and store them in an array. (Parse values into a txt file)
 
@@ -66,7 +66,7 @@ Note: Does not account for ADC acquisition or sample & hold time, couldn't find 
 
 ### Perform FFT Analysis
 
-FFT Computation: Use an FFT algorithm to analyze the frequency spectrum of the captured ADC data. 
+**FFT Computation:** Use an FFT algorithm to analyze the frequency spectrum of the captured ADC data. 
 
 I have used Python with NumPy to perform the FFT.
 ### Compare ENOB Value to ADC Datasheet
@@ -74,7 +74,7 @@ Program calculates ENOB. Compare the calculated ENOB with the specified ENOB for
 
 ![Output](./images/output.png)
 
-System ENOB: 11.08
+**System ENOB:** 11.08
 
 FFT Analysis shows a peak at 1Khz corresponding to fundamental frequency of 1khz input sine wave, the peak at 0hz is due to the 2.5v DC offset. 
 
@@ -85,13 +85,13 @@ Datasheet specifications of ADC128S102CIMT/NOPB:
 ### Conclusion
 
 
-ENOB of ADC: This value, specified in the datasheet, represents the performance of the ADC chip under ideal conditions. (11.3 - 11.8)
+**ENOB of ADC:** This value, specified in the datasheet, represents the performance of the ADC chip under ideal conditions. (11.3 - 11.8)
 
-ENOB of System: This value represents the performance of the entire system, including all surrounding circuitry. (11.08)
+**ENOB of System:** This value represents the performance of the entire system, including all surrounding circuitry. (11.08)
 
-If the System ENOB is Close to the ADC ENOB: The surrounding circuitry is well-designed, and it adds minimal noise and distortion to the signal.
+**If the System ENOB is Close to the ADC ENOB:** The surrounding circuitry is well-designed, and it adds minimal noise and distortion to the signal.
 
-If the System ENOB is Significantly Lower than the ADC ENOB: The surrounding circuitry introduces significant noise and distortion, degrading the overall system performance.
+**If the System ENOB is Significantly Lower than the ADC ENOB:** The surrounding circuitry introduces significant noise and distortion, degrading the overall system performance.
 
 The calculated ENOB value was 11.08, which is slightly on the low side since the minimum value should be somewhere in the “11.x” range, especially with the ENOB vs. Supply graph showing it should be closer to 11.8. Furthermore, LTspice simulation of the ADC input filtering clearly shows 0db attenuation at 1Khz, so this lower ENOB could result from a variety of other reasons.
 
@@ -103,15 +103,15 @@ This lower value is more likely to come from the filtering input stage of the AD
 
 However, ENOB at 11.08 sounds pretty bad because the ADC is acting like an ideal 11 bit ADC instead of a 12 bit ADC so the LSB is less reliable and more prone to noise, but still satisfactory as there is no demand for amazing precision.
 
-Concluding, we could say that the “CANNode → Canbus → Receiver Node” system acts as if we attached an ideal 11 bit ADC directly between Sensors and ECU, with some irregularities in the 12th bit. 
+**Concluding, we could say that the “CANNode → Canbus → Receiver Node” system acts as if we attached an ideal 11 bit ADC directly between Sensor signal input and ECU Memory, with some negligible irregularities in the 12th bit.**
 
 ### Notes/comments
 
-SNR value scale:
+**SNR value scale:**
 
 A weird quirk with my code is that, it would output sensible SNR values only when i multiplied by “1e20”. This might be due to my lack of understanding of the FFT functions in “numpy” but it is something that i haven’t figured out why it works that way. 
 
-SNR vs SINAD:
+**SNR vs SINAD:**
 
 The datasheet of the ADC actually specifies to calculate ENOB using SINAD instead of SNR:
 

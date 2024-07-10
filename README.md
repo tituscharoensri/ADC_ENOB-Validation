@@ -16,7 +16,13 @@ ADC Chip: https://octopart.com/adc128s102cimt%2Fnopb-texas+instruments-24823012?
 - Displays FFT plot
 
 ## Testing Process
-ENOB stands for Effective Number of Bits. It is a measure of the actual performance of an Analog-to-Digital Converter (ADC) and is used to quantify how many bits of the ADC are effectively being used to represent the analog input signal. 
+ENOB stands for Effective Number of Bits. It is a measure of the actual performance of an Analog-to-Digital Converter (ADC) and is used to quantify how many bits of the ADC are effectively being used to represent the analog input signal.  
+
+When evaluating the ENOB of a larger system that includes filters, signal conditioning, and other processing stages, you can compare it with the ENOB value of the ADC chip itself. This comparison helps you understand how much precision is lost due to the surrounding circuitry.
+
+In this case i am calculating System ENOB, which is using data acquired from a receiving CANbus Node (Nucleo board) to evaluate the performance of this system:
+
+CANNode → Sensor CANbus → Receiver Node.
 
 There are a couple of ways to calculate ENOB, we used to use SNR (signal to noise ratio), SINAD (Signal to noise and distortion ratio) or THD (Total harmonic distortion). Once we obtain a ENOB value we can compare  with the manufacturer's specifications for the ADC resolution.
 
@@ -27,6 +33,8 @@ Analog Signal Source: I set up a signal generator to produce a 1 kHz sine wave w
 ### Capture ADC Data
 
 Sampling: Use the STM32 MCU to capture a large number of samples from the ADC. Ensure that the sampling rate is appropriate for the input signal frequency. (e.g. >10 times the input signal frequency)
+
+CANNode → CAN → Nucleo Board → USB → PC com port
 
 Sampling rate calculations:
 
@@ -64,7 +72,7 @@ Program calculates ENOB. Compare the calculated ENOB with the specified ENOB for
 
 ![Output](./images/output.png)
 
-FINAL ENOB: 11.08
+System ENOB: 11.08
 
 FFT Analysis shows a peak at 1Khz corresponding to fundamental frequency of 1khz input sine wave, the peak at 0hz is due to the 2.5v DC offset. 
 
@@ -74,17 +82,26 @@ Datasheet specifications of ADC128S102CIMT/NOPB:
 
 ### Conclusion
 
+
+ENOB of ADC: This value, specified in the datasheet, represents the performance of the ADC chip under ideal conditions. (11.3 - 11.8)
+
+ENOB of System: This value represents the performance of the entire system, including all surrounding circuitry. (11.08)
+
+If the System ENOB is Close to the ADC ENOB: The surrounding circuitry is well-designed, and it adds minimal noise and distortion to the signal.
+
+If the System ENOB is Significantly Lower than the ADC ENOB: The surrounding circuitry introduces significant noise and distortion, degrading the overall system performance.
+
 The calculated ENOB value was 11.08, which is slightly on the low side since the minimum value should be somewhere in the “11.x” range, especially with the ENOB vs. Supply graph showing it should be closer to 11.8. Furthermore, LTspice simulation of the ADC input filtering clearly shows 0db attenuation at 1Khz, so this lower ENOB could result from a variety of other reasons.
+
+![LTSpice](./images/ltspice.png)
 
 I think this is somewhat due to my Sample rate calculations. The datasheet specifies a sample rate of 500 kSPS - 1MSPS sample rate, however the datasheet does not specify how to calculate the exact sample rate the ADC is running at. Thus I have ignored their sample rate range and calculated it myself using my understanding of SPI and how it works with this chip, which may be flawed and resulted in a different value. 
 
-This lower value is more likely to come from the filtering input stage of the ADC input, non-linearities in solder joints and connections, and the baud rate being 500Khz which is quite slow resulting in larger gaps in sample data. 
+This lower value is more likely to come from the filtering input stage of the ADC input, non-linearities in solder joints and interconnects, the SPI baud rate at 500Khz which is quite slow resulting in larger gaps in sample data or the Can bus Intermission time between CAN frames.
 
-However, ENOB at 11.08 sounds pretty bad because the ADC is acting like an 11 bit instead of a 12 bit ADC. This would mean the ADC value would essentially be halved, as removing 1 bit divides by 2. This actually makes sense as when i was originally testing the ADC, the voltage would always be half of the actual voltage output from the power supply, and i had to multiply the result of the ADC function by 2 in order to get an accurate value. 
+However, ENOB at 11.08 sounds pretty bad because the ADC is acting like an ideal 11 bit ADC instead of a 12 bit ADC so the LSB is less reliable and more prone to noise, but still satisfactory as there is no demand for amazing precision.
 
-![Datasheet](./images/code.png)
-
-After multiplying by 2, the accuracy of the reading was approximately 99.9% so i was happy with that and considered it to be “working“, but the fact that i had to multiply by 2 on my PCB (CANNodeV4) and the code for CANNodev3.1 did not have a multiply by 2 … had always bugged me. This was evidence for me believe an ENOB value of 11.08 to be an accurate, however next steps for next year would be further analyzing to get an ENOB value of eat least above 11.50. 
+Concluding, we could say that the “CANNode → Canbus → Receiver Node” system acts as if we attached an ideal 11 bit ADC directly between Sensors and ECU, with some irregularities in the 12th bit. 
 
 ### Notes/comments
 

@@ -20,11 +20,13 @@ ENOB stands for Effective Number of Bits. It is a measure of the actual performa
 
 When evaluating the ENOB of a larger system that includes filters, signal conditioning, and other processing stages, you can compare it with the ENOB value of the ADC chip itself. This comparison helps you understand how much precision is lost due to the surrounding circuitry.
 
-In this case i am calculating System ENOB, which is using data acquired from a receiving CANbus Node (Nucleo board) to evaluate the performance of this system:
+In this case i am calculating System ENOB, which is using data acquired from a receiving CANbus Node (Nucleo board) to evaluate the performance of this system in a way that is comparable to the actual system on the car:
 
-CANNode → Sensor CANbus → Receiver Node.
+![System Diagram](./images/system.png)
 
-There are a couple of ways to calculate ENOB, we used to use SNR (signal to noise ratio), SINAD (Signal to noise and distortion ratio) or THD (Total harmonic distortion). Once we obtain a ENOB value we can compare  with the manufacturer's specifications for the ADC resolution.
+I am using this method as a visual inspection of the plotted waveforms in I2 is not robust, thus i opted for a quantitative approach similar to how oscilloscopes are tested for their analogue to digital precision using ENOB.
+
+There are a couple of ways to calculate ENOB, you could use SNR (signal to noise ratio), SINAD (Signal to noise and distortion ratio) or THD (Total harmonic distortion). Once we obtain a ENOB value we can compare  with the manufacturer's specifications for the ADC resolution.
 
 ### Setup and Preparation
 
